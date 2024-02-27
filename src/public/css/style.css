@@ -1,0 +1,10 @@
+.search-wrapper {
+  max-width: 400px;
+  width: 100%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(.5turn)
+  }
+}
