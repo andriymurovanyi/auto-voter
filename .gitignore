@@ -5,6 +5,9 @@
 # static files
 recordings
 
+# env
+.env
+
 # Logs
 logs
 *.log
