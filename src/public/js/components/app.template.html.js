@@ -37,6 +37,8 @@ export const AppTemplate = () => `
         :total-items="pagination.total"
         :current-page="pagination.currentPage"
         :items-per-page="pagination.perPage"
+        :custom-styles="{ container: ['justify-center', 'pl-0'] }"
+        :pages-to-show="1"
         @page-change="onPageChange"
       />
     </div>

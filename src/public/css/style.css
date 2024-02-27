@@ -17,6 +17,10 @@ body {
   font-size: 14px !important;
 }
 
+.vueginate-container {
+  margin-left: -32px;
+}
+
 @media screen and (max-width: 991px) {
   .search-wrapper {
     max-width: 280px;
