@@ -1,6 +1,6 @@
 export const AppTemplate = () => `
   <div v-if="!pageLoading" class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="toolbar">
       <div class="search-wrapper">
         <input
           type="text"
@@ -16,13 +16,15 @@ export const AppTemplate = () => `
     <table class="table table-hover table-striped">
       <thead>
         <tr>
+          <th>Position</th>
           <th>Artist</th>
           <th>Song</th>
           <th>Votes</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in filteredStatistics" :key="item.song">
+        <tr v-for="(item, index) in paginatedStatistics" :key="item.song + index">
+          <td>{{ index + 1 }}</td>
           <td>{{ item.artist }}</td>
           <td>{{ item.song }}</td>
           <td>{{ item.votesAmount }}</td>
@@ -32,9 +34,10 @@ export const AppTemplate = () => `
 
     <div class="d-flex w-100 justify-content-center align-items-center">
       <Pagination
-        :total-items="pagination.totalItems"
+        :total-items="pagination.total"
         :current-page="pagination.currentPage"
-        :items-per-page="pagination.itemsPerPage"
+        :items-per-page="pagination.perPage"
+        @page-change="onPageChange"
       />
     </div>
   </div>

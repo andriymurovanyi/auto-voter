@@ -3,12 +3,11 @@ import dotenv from 'dotenv';
 
 import PuppeteerStealth from 'puppeteer-extra-plugin-stealth';
 
-import { Page} from 'puppeteer';
+import { Page } from 'puppeteer';
 import { PuppeteerHelper } from '@/helpers/puppeteer';
 
 import { PromiseUtils } from '@/utils';
 import { IVotingCandidate } from '@/models';
-import * as process from "process";
 
 // Setup environment variables
 dotenv.config();

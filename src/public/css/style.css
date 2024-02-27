@@ -1,6 +1,45 @@
+body {
+  font-size: 14px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 .search-wrapper {
   max-width: 400px;
   width: 100%;
+}
+
+.search-wrapper input {
+  font-size: 14px !important;
+}
+
+@media screen and (max-width: 991px) {
+  .search-wrapper {
+    max-width: 280px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  body {
+    font-size: 12px;
+  }
+
+  .search-wrapper input {
+    font-size: 12px !important;
+  }
+
+  .toolbar {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+
+  .search-wrapper {
+    max-width: unset;
+  }
 }
 
 @keyframes spin {
