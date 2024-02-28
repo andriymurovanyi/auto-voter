@@ -24,7 +24,7 @@ export const AppTemplate = () => `
       </thead>
       <tbody>
         <tr v-for="(item, index) in paginatedStatistics" :key="item.song + index">
-          <td>{{ index + 1 }}</td>
+          <td>{{ (pagination.currentPage - 1) * pagination.perPage + index + 1 }}</td>
           <td>{{ item.artist }}</td>
           <td>{{ item.song }}</td>
           <td>{{ item.votesAmount }}</td>
