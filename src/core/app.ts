@@ -36,7 +36,7 @@ function setupRoutes(app: Express) {
   app.get('/', AppController.index);
   app.get('/api/statistics', AppController.getStatistics);
   app.post('/api/sync', AppController.sync);
-  app.get('/api/vote', AppController.vote);
+  app.post('/api/vote', AppController.vote);
 }
 
 function setupStatic(app: Express) {

@@ -22,7 +22,7 @@ export class AppController {
   ) {
     console.log('Query: ', req.query);
 
-    const passedApiKey = req.query['api_key'];
+    const passedApiKey = req.header['X-Api-Key'];
     const desiredApiKey = process.env.API_KEY;
 
     if (passedApiKey !== desiredApiKey) {
