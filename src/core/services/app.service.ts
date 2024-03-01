@@ -6,9 +6,9 @@ import { Worker } from '@/helpers/worker';
 import { Paths } from '@/static/paths';
 import { Workers } from '@/static/workers';
 
-import { HtmlUtils } from '@/utils';
+import { HtmlUtils, RandomUtils } from '@/utils';
 
-import { IVotingCandidate, VotingCandidateModel } from '@/models';
+import { IVotingCandidate, UserModel, VotingCandidateModel } from '@/models';
 
 const InjectionTags = {
   Style: '<!--style-tags-->'
@@ -33,7 +33,23 @@ export class AppService {
 
     const worker = Workers.JaggerMusicAwards.Statistics;
 
-    const statistics = await Worker.run(worker);
+    const users = await UserModel.find().lean();
+    const randomUserIndex = RandomUtils.getRandomNumber(0, users.length - 1);
+
+    const user = users[randomUserIndex];
+
+    const statistics = await Worker.run<IVotingCandidate.BaseModel>(worker, {
+      user,
+    });
+
+    const isAllZeros = statistics.every((item) => {
+      return item.votesAmount <= 0;
+    });
+
+    if (isAllZeros) {
+      Logger.error('Sync issue: Data was not correctly parsed');
+      return;
+    }
 
     await VotingCandidateModel.deleteMany({});
 

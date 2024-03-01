@@ -7,8 +7,10 @@ import { json, urlencoded } from 'body-parser';
 import { AppController } from '@/core/controllers/app.controller';
 import { AppService } from '@/core/services/app.service';
 
-import { MongoHelper } from '@/helpers/mongo';
 import { JsModule } from '@/middlewares/js-module';
+import { ErrorHandler } from '@/middlewares/error-handler';
+
+import { MongoHelper } from '@/helpers/mongo';
 import { Paths } from '@/static/paths';
 
 export async function initApp() {
@@ -24,6 +26,8 @@ export async function initApp() {
   setupRoutes(app);
 
   setupCronJobs();
+
+  app.use(ErrorHandler());
 
   return app;
 }
@@ -56,5 +60,6 @@ function setupDBConnection() {
 }
 
 function setupCronJobs() {
-  cron.schedule('*/10 * * * *', () => AppService.sync());
+  // Runs every hour
+  cron.schedule('0 * * * *', () => AppService.sync());
 }

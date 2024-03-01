@@ -17,5 +17,4 @@ async function runApp() {
 
 runApp().catch((error) => {
   Logger.error(error.stack);
-  process.exit(1);
 });

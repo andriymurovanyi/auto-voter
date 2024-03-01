@@ -2,7 +2,7 @@ import { fork } from 'child_process';
 import { Logger } from '@/helpers/logger';
 
 export class Worker {
-  static run(workerPath: string, payload: Record<string, string> = {}) {
+  static run<T>(workerPath: string, payload: any = {}): Promise<T[]> {
     const workerArgs: ReadonlyArray<string> = [JSON.stringify(payload)];
 
     return new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ export class Worker {
           reject(error);
         }
 
-        resolve(code);
+        resolve(code as any);
       });
     });
   }

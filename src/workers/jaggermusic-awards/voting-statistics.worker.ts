@@ -7,7 +7,7 @@ import { Page } from 'puppeteer';
 import { PuppeteerHelper } from '@/helpers/puppeteer';
 
 import { PromiseUtils } from '@/utils';
-import { IVotingCandidate } from '@/models';
+import { IUser, IVotingCandidate } from '@/models';
 
 // Setup environment variables
 dotenv.config();
@@ -22,6 +22,12 @@ const timerId = setTimeout(() => {
   console.warn(`[${process.pid}] Worker timeout exceeded ${WORKER_TIMEOUT} ms`);
   process.exit(124);
 }, WORKER_TIMEOUT);
+
+interface WorkerOptions {
+  user: IUser.Model;
+}
+
+const options: WorkerOptions = {} as any;
 
 (async function runWorker(): Promise<void> {
   try {
@@ -39,7 +45,7 @@ const timerId = setTimeout(() => {
 
 async function parseStatistics(): Promise<IVotingCandidate.BaseModel[]> {
   const launchData = await PuppeteerHelper.getLaunchData({
-    useRandomProxy: false,
+    useRandomProxy: true,
     headless: true,
   });
 
@@ -52,6 +58,8 @@ async function parseStatistics(): Promise<IVotingCandidate.BaseModel[]> {
   await page.setViewport({ width: 1440, height: 900 });
 
   await page.goto(PAGE_URL);
+
+  console.log(`Page navigation to: ${PAGE_URL}`);
 
   await page.waitForSelector('.container');
 
@@ -67,16 +75,22 @@ async function parseStatistics(): Promise<IVotingCandidate.BaseModel[]> {
 
   await PromiseUtils.sleep(2000);
 
+  console.log(`Page navigation to: ${PAGE_URL}/member`);
+
   // Wait for the div element with class 'login-account' to appear
   await page.waitForSelector('.login-account');
 
-  await fillForm(page);
+  await fillForm(page, options.user);
 
   await PromiseUtils.sleep(1000);
 
   await page.click('button[type="submit"]');
 
   await page.waitForNavigation();
+
+  console.log(`${options.user?.email || ''} successful login`);
+
+  await PromiseUtils.sleep(1000);
 
   await page.goto(`${PAGE_URL}/longlist-yb`);
 
@@ -119,7 +133,17 @@ async function parseStatistics(): Promise<IVotingCandidate.BaseModel[]> {
   return Promise.all(parsePromises);
 }
 
-async function fillForm(page: Page) {
-  await page.type('#loginform-phone', '680132048');
-  await page.type('#loginform-password', 'qweqwe123');
+async function fillForm(page: Page, user: IUser.Model) {
+  if (!user) {
+    await page.type('#loginform-phone', '981014576');
+    await page.type('#loginform-password', 'wopavu');
+
+    return;
+  }
+
+  const phoneNumber = user.phoneNumber
+    .slice(3, user.phoneNumber.length);
+
+  await page.type('#loginform-phone', phoneNumber);
+  await page.type('#loginform-password', user.password);
 }

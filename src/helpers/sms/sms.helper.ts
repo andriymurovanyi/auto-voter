@@ -90,8 +90,6 @@ export class SmsActivatorHelper {
         console.info(
           { status, code },
           `Current status: ${status}`,
-          SmsActivatorHelper,
-          this.GetCode,
         );
 
         return await this.GetCode({ activateId, attempt: attempt + 1 });

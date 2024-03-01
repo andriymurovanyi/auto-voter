@@ -32,6 +32,12 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
   await page.type('#memberform-lastname', fakeUser.lastName);
   await page.type('#memberform-password', fakeUser.password);
   await page.type('#memberform-repassword', fakeUser.password);
+
+  await page.$eval(
+    `input#memberform-agree`,
+    (el) => {
+      el.click()
+    });
 }
 
 (async function runWorker(): Promise<void> {
@@ -43,6 +49,8 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
   });
 
   const fakeUser = FakerHelper.generateFakeUser();
+
+  console.log('User: ', fakeUser.email);
 
   const browser = await puppeteer.launch(launchData.browserOptions);
 
@@ -58,15 +66,21 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
 
   await page.waitForSelector('.container');
 
+  console.log(`Navigate to ${PAGE_URL}`);
+
   // Wait for the div element with class 'first-screen__button' to appear
   await page.waitForSelector('.first-screen__button');
 
   // Click the anchor tag inside the div
   await page.click('.first-screen__button a');
 
+  console.log('Age confirmed');
+
   await PromiseUtils.sleep(2000);
 
   await page.goto(`${PAGE_URL}/member`, { waitUntil: 'domcontentloaded' });
+
+  console.log(`Navigation to ${PAGE_URL}/member`);
 
   await PromiseUtils.sleep(2000);
 
@@ -80,6 +94,8 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
 
   const { number, id: activateId } = await SmsActivatorHelper.GetNumber();
 
+  console.log('Phone received: ', number);
+
   fakeUser.phoneNumber = number;
 
   await UserModel.create({
@@ -92,20 +108,18 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
     activateId,
   });
 
-  Logger.info('[PAGE_STATE]: ', { fakeUser, number, activateId });
+  console.info('User create: ', { fakeUser, number, activateId });
 
   await fillForm(page, fakeUser);
-
-  await page.$eval(
-    `input#memberform-agree`,
-    (el) => {
-      el.click()
-    });
 
   // Submit the form
   await page.click('button[type="submit"]');
 
+  console.log('Sign up completed');
+
   await page.waitForNavigation();
+
+  console.log(`Start ${number} SMS verification...`);
 
   await page.waitForSelector('.confirm .sendSMS');
 
@@ -127,6 +141,8 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
 
   await page.waitForSelector('.confirm');
 
+  console.log(`Passed ${number} SMS verification`);
+
   await PromiseUtils.sleep(2000);
 
   await UserModel.updateOne({
@@ -141,5 +157,7 @@ async function fillForm(page: Page, fakeUser: IUser.BaseModel) {
 
   await browser.close();
 
-  process.exit();
+  console.log('Completed');
+
+  process.exit(0);
 })();

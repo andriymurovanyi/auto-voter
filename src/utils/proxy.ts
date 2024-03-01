@@ -3,7 +3,7 @@ import { ProxiesList, type Proxy } from '@/static/proxies';
 
 export class ProxyUtils {
   static getRandomProxy() {
-    const randomIndex = RandomUtils.getRandomNumber(0, ProxiesList.length);
+    const randomIndex = RandomUtils.getRandomNumber(0, ProxiesList.length - 1);
     return ProxiesList[randomIndex];
   }
 

@@ -20,7 +20,11 @@ export class AppController {
   ) {
     res.json({ syncStatus: 'started' });
 
-    return AppService.sync();
+    try {
+      await AppService.sync()
+    } catch (error: any) {
+      console.log('Sync error: ', error.stack);
+    }
   }
 
   static async getStatistics(

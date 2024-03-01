@@ -39,6 +39,8 @@ export class PuppeteerHelper {
       const connectionURL = ProxyUtils.createConnectionURL(proxy);
       const proxyUrl = await anonymizeProxy(connectionURL);
 
+      console.log('Proxy url: ', connectionURL);
+
       args.push(`--proxy-server=${proxyUrl}`);
       chosenProxy = proxy;
     }
